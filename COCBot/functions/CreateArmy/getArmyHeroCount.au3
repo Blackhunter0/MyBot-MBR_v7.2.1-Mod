@@ -117,7 +117,7 @@ Func getArmyHeroCount($bOpenArmyWindow = False, $bCloseArmyWindow = False, $bSet
 EndFunc   ;==>getArmyHeroCount
 
 Func ArmyHeroStatus($i)
-
+#cs
 ; check hero status by imgloc - Demen
 	Local Const $aHeroesRect[3][4] = [[606, 338, 682, 390], [681, 338, 756, 390], [755, 338, 833, 390]]
 	Local $directory = @ScriptDir & "\imgxml\trainwindow\herostatus"
@@ -139,8 +139,7 @@ Func ArmyHeroStatus($i)
 
 	Return $sResult
 ; check hero status by imgloc - Demen
-
-#CS
+#ce
 
 	Local $sImageDir = "trainwindow-HeroStatus-bundle", $sResult = ""
 	Local Const $aHeroesRect[3][4] = [[660, 349, 673, 361], [734, 349, 747, 361], [807, 349, 822, 361]]
@@ -166,5 +165,5 @@ Func ArmyHeroStatus($i)
 		Case 2
 			Return "none"
 	EndSwitch
-#CE
+
 EndFunc   ;==>ArmyHeroStatus
