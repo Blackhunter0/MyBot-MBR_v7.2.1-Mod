@@ -273,6 +273,7 @@
 #include "functions\Village\ConvertOCRTime.au3"
 #include "functions\Other\ClickZoneR.au3"
 #include "functions\Village\CheckNeedOpenTrain.au3"
+#include "functions\Village\ClanHop.au3" ;Clan Hop MOD
 #include "functions\Village\SwitchBetweenBases.au3"
 
 #include "functions\Village\BuilderBase\Collect.au3"
@@ -280,7 +281,8 @@
 
 #include "functions\Other\Api.au3"
 #include "functions\Other\ApiClient.au3"
-
+;Demen Mod
+#include "MOD_Demen\Functions_Demen.au3"
 ; OLD CODE
 
 ;#include "functions\Image Search\checkWall.au3"

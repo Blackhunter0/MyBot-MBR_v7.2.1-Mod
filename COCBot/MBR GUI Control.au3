@@ -48,6 +48,9 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "GUI\MBR GUI Control Android.au3"
 #include "MBR GUI Action.au3"
 
+; Demen Mod
+#include "MOD_Demen\GUI Control_Demen.au3"
+
 Func InitializeMainGUI()
    InitializeControlVariables()
 
@@ -1355,6 +1358,8 @@ EndFunc   ;==>ControlRedraw
 Func SetTime($bForceUpdate = False)
 	If $g_hTimerSinceStarted = 0 Then Return ; GIGO, no setTime when timer hasn't started yet
 	Local $day = 0, $hour = 0, $min = 0, $sec = 0
+	Local Static $DisplayLoop = 0		; Showing troops time in ProfileStats - SwitchAcc - Demen
+
 	If GUICtrlRead($g_hGUI_STATS_TAB, 1) = $g_hGUI_STATS_TAB_ITEM2 Or $bForceUpdate = True Then
 		_TicksToDay(Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed), $day, $hour, $min, $sec)
 		GUICtrlSetData($g_hLblResultRuntime, $day > 0 ? StringFormat("%2u Day(s) %02i:%02i:%02i", $day, $hour, $min, $sec) : StringFormat("%02i:%02i:%02i", $hour, $min, $sec))
@@ -1363,6 +1368,60 @@ Func SetTime($bForceUpdate = False)
 		_TicksToTime(Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed), $hour, $min, $sec)
 		GUICtrlSetData($g_hLblResultRuntimeNow, StringFormat("%02i:%02i:%02i", $hour, $min, $sec))
 	EndIf
+
+; Showing troops time in ProfileStats - SwitchAcc - Demen
+	If $DisplayLoop >= 10 Then ; Conserve Clock Cycles on Updating times
+		$DisplayLoop = 0
+		;Update Multi Stat Page _ SwitchAcc_Demen_Style
+		If $ichkSwitchAcc = 1 Then
+			If GUICtrlRead($g_hGUI_BOT_TAB, 1) = $g_hGUI_BOT_TAB_ITEM6 Then
+				For $i = 0 To $nTotalProfile - 1 ; Update time for all Accounts
+					If $aProfileType[$i] = 1 And _
+							$i <> $nCurProfile - 1 And _
+							$aTimerStart[$i] <> 0 Then
+						$aTimerEnd[$i] = TimerDiff($aTimerStart[$i])
+						$aUpdateRemainTrainTime[$i] = Round($aRemainTrainTime[$i] * 60 * 1000 - $aTimerEnd[$i], 2)
+						If $aUpdateRemainTrainTime[$i] < 0 Then
+							GUICtrlSetData($g_lblTroopsTime[$i], Round($aUpdateRemainTrainTime[$i] / 60 / 1000, 2))
+							GUICtrlSetBkColor($g_lblTroopsTime[$i], $COLOR_RED)
+							GUICtrlSetColor($g_lblTroopsTime[$i], $COLOR_WHITE)
+						Else
+							GUICtrlSetData($g_lblTroopsTime[$i], Round($aUpdateRemainTrainTime[$i] / 60 / 1000, 2))
+							GUICtrlSetBkColor($g_lblTroopsTime[$i], $COLOR_YELLOW)
+							GUICtrlSetColor($g_lblTroopsTime[$i], $COLOR_BLACK)
+						EndIf
+					EndIf
+
+					If $i <> $nCurProfile - 1 And $g_aLabTimerStart[$i] <> 0 Then	; update lab time of all accounts on multi stats
+						Local $sLabtime = ""
+						Local $TimerEnd = Round(TimerDiff($g_aLabTimerStart[$i]) / 60 / 1000, 0)
+						Local $UpdateLabTime = $g_aLabTimeAcc[$i] - $TimerEnd
+						If $UpdateLabTime <= 0 Then
+							GUICtrlSetColor($g_ahLblLab[$i], $COLOR_GREEN)
+							GUICtrlSetColor($g_ahLblLabTime[$i], $COLOR_GREEN)
+							$sLabtime = "Ready"
+						Else
+							Local $UpdateDay = Int($UpdateLabTime/1440)
+							Local $UpdateHour = Int(($UpdateLabTime- 1440*$UpdateDay)/60)
+							Local $UpdateMin = Int(($UpdateLabTime- 1440*$UpdateDay - 60 * $UpdateHour)/60)
+
+							If $UpdateDay > 0 Then
+								$sLabtime = $UpdateDay & "d " & $UpdateHour & "h"
+							ElseIf $UpdateHour > 0 Then
+								$sLabtime = $UpdateHour & "h " & $UpdateMin & "m"
+							ElseIf $UpdateMin > 0 Then
+								$sLabtime = $UpdateMin & "m"
+							EndIf
+						EndIf
+						GUICtrlSetData($g_ahLblLabTime[$i], $sLabtime)
+					EndIf
+				Next
+			EndIf
+		EndIf
+	EndIf
+	$DisplayLoop += 1
+; Showing troops time in ProfileStats - SwitchAcc - Demen
+
 EndFunc   ;==>SetTime
 
 Func tabMain()
@@ -1626,6 +1685,9 @@ Func tabBot()
 				ControlHide("","",$g_hCmbGUILanguage)
 			Case $tabidx = 4 ; Stats tab
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_STATS)
+				ControlHide("","",$g_hCmbGUILanguage)
+			Case $tabidx = 5 ; ProfileStats tab - SwitchAcc Demen
+				GUISetState(@SW_HIDE, $g_hGUI_STATS)
 				ControlHide("","",$g_hCmbGUILanguage)
 		EndSelect
 EndFunc   ;==>tabBot

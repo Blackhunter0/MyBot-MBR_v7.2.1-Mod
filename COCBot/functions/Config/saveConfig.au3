@@ -200,7 +200,7 @@ Func SaveRegularConfig()
 	SaveConfig_600_35()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	; Quick train
-	SaveConfig_600_52_1()
+;~ 	SaveConfig_600_52_1()	; Included in SimpleTrain - Demen
 	; troop/spell levels and counts
 	SaveConfig_600_52_2()
 	; <><><> Attack Plan / Train Army / Train Order <><><>
@@ -219,6 +219,10 @@ Func SaveRegularConfig()
 
 	; <><><><> Bot / Stats <><><><>
 	; <<< nothing here >>>
+
+	; Demen Mod
+	SaveConfig_SwitchAcc()
+	SaveConfig_SimpleTrain()
 
 	;SetDebugLog("saveConfig: Wrote " & $g_iIniLineCount & " ini lines.")
 	_Ini_Save($g_sProfileConfigPath)
@@ -401,6 +405,7 @@ Func SaveConfig_600_12()
 	_Ini_Add("donate", "chkExtraPersian", $g_bChkExtraPersian ? 1 : 0)
 
 	_Ini_Add("donate", "txtBlacklist", StringReplace($g_sTxtGeneralBlacklist, @CRLF, "|"))
+	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
 EndFunc   ;==>SaveConfig_600_12
 
 Func SaveConfig_600_13()
@@ -745,6 +750,7 @@ Func SaveConfig_600_29_DB_Scripted()
 	_Ini_Add("attack", "RedlineRoutineDB", $g_aiAttackScrRedlineRoutine[$DB])
 	_Ini_Add("attack", "DroplineEdgeDB", $g_aiAttackScrDroplineEdge[$DB])
 	_Ini_Add("attack", "ScriptDB", $g_sAttackScrScriptName[$DB])
+	_Ini_Add("attack", "CSVSpeedDB", $isldSelectedCSVSpeed[$DB])
 EndFunc   ;==>SaveConfig_600_29_DB_Scripted
 
 Func SaveConfig_600_29_DB_Milking()
@@ -844,6 +850,7 @@ Func SaveConfig_600_29_LB_Scripted()
 	_Ini_Add("attack", "RedlineRoutineAB", $g_aiAttackScrRedlineRoutine[$LB])
 	_Ini_Add("attack", "DroplineEdgeAB", $g_aiAttackScrDroplineEdge[$LB])
 	_Ini_Add("attack", "ScriptAB", $g_sAttackScrScriptName[$LB])
+	_Ini_Add("attack", "CSVSpeedAB", $isldSelectedCSVSpeed[$LB])
 EndFunc   ;==>SaveConfig_600_29_LB_Scripted
 
 Func SaveConfig_600_29_TS()
@@ -986,12 +993,14 @@ Func SaveConfig_600_35()
 	_Ini_Add("other", "ChkFixClanCastle", $g_bForceClanCastleDetection ? 1 : 0)
 EndFunc   ;==>SaveConfig_600_35
 
+#CS	; Included in SimpleTrain - Demen
 Func SaveConfig_600_52_1()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	ApplyConfig_600_52_1("Save")
 	_Ini_Add("other", "ChkUseQTrain", $g_bQuickTrainEnable ? 1 : 0)
 	_Ini_Add("troop", "QuickTrainArmyNum", $g_iQuickTrainArmyNum)
 EndFunc   ;==>SaveConfig_600_52_1
+#CE
 
 Func SaveConfig_600_52_2()
 	; troop/spell levels and counts
